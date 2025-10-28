@@ -1,0 +1,10 @@
+pandas
+scikit-learn
+fastapi
+uvicorn
+psycopg2-binary
+plotly
+dash
+dash-bootstrap-components
+joblib
+
