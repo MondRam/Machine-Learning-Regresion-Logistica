@@ -50,3 +50,33 @@ def get_metrics():
 
     return metrics
 
+@app.post("/predict")
+def predict(data: dict):
+    try:
+        df_input = pd.DataFrame([data])
+        pred = model.predict(df_input)
+        return {"prediccion_balance": float(pred[0])}
+    except Exception as e:
+        return {"error": f"No se pudo hacer la predicción: {e}"}
+
+@app.post("/add_data")
+def add_data(data: dict):
+    try:
+        conn = psycopg2.connect(**DB)
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO new_data (timestamp, data, balance)
+            VALUES (%s, %s, %s)
+        """, (
+            datetime.now(),
+            json.dumps(data),
+            data.get("balance")
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "dato guardado correctamente"}
+    except Exception as e:
+        return {"error": f"No se pudo guardar el dato: {e}"}
+# Redeploy test para reconexión a Supabase
+
