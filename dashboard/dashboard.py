@@ -9,13 +9,12 @@ from scipy.stats import ttest_1samp
 import json
 import numpy as np
 
-API_URL = "http://127.0.0.1:8000"  # Cambia si tu API está en otra URL
+API_URL = "http://127.0.0.1:8000"  
 
 st.title("🤖 Dashboard - Modelo Logístico")
 
-# -----------------------------
-# 1️⃣ Formulario de inserción
-# -----------------------------
+
+# 1Formulario de inserció
 st.header("🧾 Insertar nuevo registro")
 with st.form("formulario"):
     age = st.number_input("Edad", 18, 100)
@@ -34,13 +33,11 @@ with st.form("formulario"):
             "balance": balance, "housing": housing, "loan": loan, "y": y
         })
         if res.ok:
-            st.success("✅ Dato insertado y modelo reentrenado.")
+            st.success("Dato insertado y modelo reentrenado.")
         else:
-            st.error(f"❌ Error al insertar: {res.text}")
+            st.error(f"Error al insertar: {res.text}")
 
-# -----------------------------
-# 2️⃣ Métricas históricas
-# -----------------------------
+# Métricas históricas
 st.header("📈 Métricas del modelo")
 res = requests.get(f"{API_URL}/metricas/")
 
@@ -78,6 +75,17 @@ if res.ok:
             ax.set_title("Curva Precision-Recall")
             st.pyplot(fig)
         else:
-            st.warning("⚠️ No hay datos de Precision-Recall disponibles")
+            st.warning(" No hay datos de Precision-Recall disponibles")
 
-       
+        # Prueba de hipótesis (accuracy > 0.9)
+        accuracy_vals = df["accuracy"].astype(float)
+        t_stat, p_val = ttest_1samp(accuracy_vals, 0.9)
+        alpha = 0.05
+        if p_val/2 < alpha and t_stat > 0:
+            st.success(" Rechazamos H0: el modelo ha mejorado significativamente")
+        else:
+            st.warning(" No se puede rechazar H0")
+    else:
+        st.warning(" No hay métricas registradas aún")
+else:
+    st.error(f" Error al obtener métricas: {res.status_code}")
