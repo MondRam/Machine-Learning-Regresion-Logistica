@@ -11,12 +11,12 @@ import os
 
 API_URL = os.getenv("API_URL")  # e.g., https://your-railway-app.up.railway.app
 
-st.title(" Dashboard - Modelo Logístico")
+st.title("🤖 Dashboard - Modelo Logístico")
 
 # -----------------------------
 # 🔄 Insertar registro y predecir (formulario único)
 # -----------------------------
-st.header(" Insertar registro y obtener predicción")
+st.header("🧾 Insertar registro y obtener predicción")
 
 with st.form("formulario_unico"):
     age = st.number_input("Edad", min_value=18, max_value=100, value=18)
@@ -32,7 +32,7 @@ with st.form("formulario_unico"):
 
 if submitted:
     if not API_URL:
-        st.error(" API_URL no está definida en variables de entorno.")
+        st.error("❌ API_URL no está definida en variables de entorno.")
     else:
         payload = {
             "age": age,
@@ -49,11 +49,11 @@ if submitted:
         try:
             res_insert = requests.post(f"{API_URL}/insertar_datos/", json=payload, timeout=30)
             if res_insert.ok:
-                st.success(" Registro guardado y reentrenamiento disparado.")
+                st.success("✅ Registro guardado y reentrenamiento disparado.")
             else:
-                st.error(f" Error al insertar: {res_insert.status_code} {res_insert.text}")
+                st.error(f"❌ Error al insertar: {res_insert.status_code} {res_insert.text}")
         except Exception as e:
-            st.error(f" Error de conexión al insertar: {e}")
+            st.error(f"❌ Error de conexión al insertar: {e}")
 
         # 2) Pedir predicción
         try:
@@ -66,27 +66,27 @@ if submitted:
                     if isinstance(probs, list):
                         st.write("Probabilidades:", probs)
                     else:
-                        st.info("ℹ No se recibieron probabilidades.")
+                        st.info("ℹ️ No se recibieron probabilidades.")
                 elif "error" in resultado:
-                    st.error(f" Error en predicción: {resultado['error']}")
+                    st.error(f"❌ Error en predicción: {resultado['error']}")
                     trace = resultado.get("trace")
                     if trace:
                         with st.expander("Ver detalle técnico"):
                             st.code(trace)
                 else:
-                    st.warning(" Respuesta inesperada del servidor de predicción.")
+                    st.warning("⚠️ Respuesta inesperada del servidor de predicción.")
             else:
-                st.error(f" Error en predicción: {res_pred.status_code} {res_pred.text}")
+                st.error(f"❌ Error en predicción: {res_pred.status_code} {res_pred.text}")
         except Exception as e:
-            st.error(f" Error de conexión al predecir: {e}")
+            st.error(f"❌ Error de conexión al predecir: {e}")
 
 # -----------------------------
-#  Métricas del modelo (sin cambios)
+# 📈 Métricas del modelo (sin cambios)
 # -----------------------------
-st.header(" Métricas del modelo")
+st.header("📊 Métricas del modelo")
 
 if not API_URL:
-    st.error(" API_URL no está definida.")
+    st.error("❌ API_URL no está definida.")
 else:
     try:
         res = requests.get(f"{API_URL}/metricas/", timeout=30)
@@ -104,7 +104,7 @@ else:
                     chart_df = df[["timestamp","accuracy","precision","recall","f1"]].set_index("timestamp")
                     st.line_chart(chart_df)
                 else:
-                    st.info(" Aún no hay suficientes métricas para graficar.")
+                    st.info("ℹ️ Aún no hay suficientes métricas para graficar.")
 
                 # Última matriz de confusión
                 if "matriz_confusion" in df.columns and len(df) > 0:
@@ -115,9 +115,9 @@ else:
                         ConfusionMatrixDisplay(cm).plot(ax=ax)
                         st.pyplot(fig)
                     else:
-                        st.warning(" No hay matriz de confusión disponible.")
+                        st.warning("⚠️ No hay matriz de confusión disponible.")
                 else:
-                    st.info(" No hay columna 'matriz_confusion' disponible.")
+                    st.info("ℹ️ No hay columna 'matriz_confusion' disponible.")
 
                 # Curva Precision-Recall
                 if "pr_precision" in df.columns and "pr_recall" in df.columns and len(df) > 0:
@@ -131,9 +131,9 @@ else:
                         ax.set_title("Curva Precision-Recall")
                         st.pyplot(fig)
                     else:
-                        st.warning(" No hay datos de Precision-Recall disponibles.")
+                        st.warning("⚠️ No hay datos de Precision-Recall disponibles.")
                 else:
-                    st.info(" No hay columnas de Precision-Recall disponibles.")
+                    st.info("ℹ️ No hay columnas de Precision-Recall disponibles.")
 
                 # Prueba de hipótesis (accuracy > 0.9)
                 if "accuracy" in df.columns:
@@ -143,16 +143,16 @@ else:
                             t_stat, p_val = ttest_1samp(accuracy_vals, 0.9)
                             alpha = 0.05
                             if p_val/2 < alpha and t_stat > 0:
-                                st.success(" Rechazamos H0: el modelo ha mejorado significativamente.")
+                                st.success("✅ Rechazamos H0: el modelo ha mejorado significativamente.")
                             else:
-                                st.warning(" No se puede rechazar H0.")
+                                st.warning("⚠️ No se puede rechazar H0.")
                         else:
-                            st.info(" Aún no hay valores de accuracy para la prueba.")
+                            st.info("ℹ️ Aún no hay valores de accuracy para la prueba.")
                     except Exception:
-                        st.info(" No fue posible calcular la prueba de hipótesis.")
+                        st.info("ℹ️ No fue posible calcular la prueba de hipótesis.")
             else:
-                st.warning(" No hay métricas registradas aún.")
+                st.warning("⚠️ No hay métricas registradas aún.")
         else:
-            st.error(f" Error al obtener métricas: {res.status_code} {res.text}")
+            st.error(f"❌ Error al obtener métricas: {res.status_code} {res.text}")
     except Exception as e:
-        st.error(f" Error al procesar métricas: {e}")
+        st.error(f"❌ Error al procesar métricas: {e}")

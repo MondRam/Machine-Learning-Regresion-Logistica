@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
@@ -12,7 +12,7 @@ DATA_PATH = "dataset/bank-full-minado.csv"
 df = pd.read_csv(DATA_PATH)
 
 if "y" not in df.columns:
-    raise ValueError(" El dataset debe tener la columna 'y'")
+    raise ValueError("❌ El dataset debe tener la columna 'y'")
 
 X = df.drop(columns=["y"])
 y = df["y"]
@@ -33,8 +33,8 @@ metrics = {
     "matriz_confusion": confusion_matrix(y_test, y_pred).tolist()
 }
 
-print(" Modelo guardado correctamente")
-print(" Métricas calculadas:", metrics)
+print("✅ Modelo guardado correctamente")
+print("✅ Métricas calculadas:", metrics)
 
 joblib.dump(model, "model/regresion_logistica.pkl")
 
@@ -49,6 +49,6 @@ try:
             """),
             metrics_to_save
         )
-    print(" Métricas guardadas en dbo.metricas correctamente")
+    print("✅ Métricas guardadas en dbo.metricas correctamente")
 except Exception as e:
-    print(" Error al guardar métricas en la BD:", e)
+    print("❌ Error al guardar métricas en la BD:", e)
