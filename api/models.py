@@ -43,7 +43,9 @@ class LabeledExample(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
     # Características originales usadas en la predicción/entrada
+
     features = Column(_json_type(), nullable=False)
     # Etiqueta real del resultado (0/1)
     y = Column(Integer, nullable=False)
