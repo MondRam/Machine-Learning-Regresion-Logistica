@@ -67,12 +67,16 @@ def _download_bank_dataset() -> pd.DataFrame:
 
 
 def _load_local_dataset_if_available() -> pd.DataFrame | None:
+
     # Permite override explícito por variable de entorno
+
     override = os.getenv("BANK_DATASET_PATH")
     candidates: list[str] = []
     if override:
         candidates.append(override)
+
     # Buscar en la raíz del proyecto
+
     base_dir = os.path.dirname(os.path.dirname(__file__))
     candidates.extend([
         os.path.join(base_dir, "bank-additional-full.csv"),
@@ -83,7 +87,9 @@ def _load_local_dataset_if_available() -> pd.DataFrame | None:
         if path and os.path.isfile(path):
             # Intentar detectar separador (coma o punto y coma)
             try:
+
                 # Probar ';' primero (común en este dataset)
+
                 df = pd.read_csv(path, sep=";")
             except Exception:
                 df = pd.read_csv(path)
@@ -251,7 +257,9 @@ def train_and_evaluate(base_df: pd.DataFrame, additional_df: pd.DataFrame | None
 
 
 def load_default_dataset() -> pd.DataFrame:
+
     # Preferir el CSV local si el usuario lo colocó en el proyecto
+
     df = _load_local_dataset_if_available()
     if df is not None:
         return df
@@ -268,4 +276,6 @@ def dump_artifact(pipe: Pipeline) -> bytes:
 def load_artifact(data: bytes) -> Pipeline:
     buf = io.BytesIO(data)
     pipe = joblib.load(buf)
+
     return pipe
+
