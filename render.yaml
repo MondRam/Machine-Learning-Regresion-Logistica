@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: bank-ml-api
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.10
+      - key: TRAINING_SOURCE_URL
+        sync: false
+      - key: TRAINING_SQL
+        sync: false
+      - key: AUTO_RETRAIN_AFTER_PREDICTION
+        value: "true"
+      - key: AUTO_RETRAIN
+        value: "false"
+      - key: RETRAIN_MIN_FEEDBACK
+        value: "1"
