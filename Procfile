@@ -1,1 +1,0 @@
-web: streamlit run dashboard/dashboard.py --server.port=8080 --server.address=0.0.0.0
